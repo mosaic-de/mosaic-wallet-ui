@@ -28,6 +28,7 @@ class _PanelFrame extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _BackButton(onPressed: scope.pop),
                 SizedBox(width: tokens.spacing.md),
@@ -36,6 +37,7 @@ class _PanelFrame extends StatelessWidget {
                     title,
                     style: tokens.typography.title.copyWith(
                       color: tokens.color.textPrimary,
+                      height: 1,
                     ),
                   ),
                 ),
