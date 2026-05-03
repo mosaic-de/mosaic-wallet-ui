@@ -16,37 +16,34 @@ class _PanelFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = MosaicTheme.of(context);
     final scope = MosaicSurfaceScope.of(context);
-    return Padding(
+    return MosaicPanel(
       padding: EdgeInsets.symmetric(
         horizontal: tokens.spacing.md,
         vertical: tokens.spacing.md,
       ),
-      child: MosaicPanel(
-        padding: EdgeInsets.all(tokens.spacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _BackButton(onPressed: scope.pop),
-                SizedBox(width: tokens.spacing.md),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: tokens.typography.title.copyWith(
-                      color: tokens.color.textPrimary,
-                      height: 1,
-                    ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _BackButton(onPressed: scope.pop),
+              SizedBox(width: tokens.spacing.md),
+              Expanded(
+                child: Text(
+                  title,
+                  style: tokens.typography.title.copyWith(
+                    color: tokens.color.textPrimary,
+                    height: 1,
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: tokens.spacing.md),
-            Flexible(child: child),
-          ],
-        ),
+              ),
+            ],
+          ),
+          SizedBox(height: tokens.spacing.md),
+          Expanded(child: child),
+        ],
       ),
     );
   }
