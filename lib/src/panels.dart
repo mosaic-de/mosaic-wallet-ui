@@ -68,8 +68,10 @@ class _BackButton extends StatelessWidget {
         ),
         child: Text(
           '←',
+          textAlign: TextAlign.center,
           style: tokens.typography.title.copyWith(
             color: tokens.color.textPrimary,
+            height: 1,
           ),
         ),
       ),
