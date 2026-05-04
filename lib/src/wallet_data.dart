@@ -45,6 +45,27 @@ class Transaction {
 }
 
 @immutable
+class WalletGoal {
+  const WalletGoal({
+    required this.label,
+    required this.savedCents,
+    required this.targetCents,
+    required this.dueBy,
+    this.glyph,
+  });
+
+  final String label;
+  final int savedCents;
+  final int targetCents;
+  final DateTime dueBy;
+  final String? glyph;
+
+  double get progress => targetCents == 0
+      ? 0
+      : (savedCents / targetCents).clamp(0.0, 1.0);
+}
+
+@immutable
 class WalletCard {
   const WalletCard({
     required this.label,
@@ -85,6 +106,9 @@ class WalletData {
   final ValueNotifier<List<WalletCard>> cards = ValueNotifier<List<WalletCard>>(
     const [],
   );
+  final ValueNotifier<List<WalletGoal>> goals = ValueNotifier<List<WalletGoal>>(
+    const [],
+  );
   final ValueNotifier<int> weeklySpend = ValueNotifier<int>(0);
 
   Timer? _ticker;
@@ -100,7 +124,38 @@ class WalletData {
     balance.dispose();
     transactions.dispose();
     cards.dispose();
+    goals.dispose();
     weeklySpend.dispose();
+  }
+
+  /// Add a top-up to one of the existing goals.
+  void contributeToGoal(String label, int amountCents) {
+    if (amountCents <= 0) return;
+    if (balance.value < amountCents) return;
+    final next = <WalletGoal>[
+      for (final g in goals.value)
+        if (g.label == label)
+          WalletGoal(
+            label: g.label,
+            savedCents: g.savedCents + amountCents,
+            targetCents: g.targetCents,
+            dueBy: g.dueBy,
+            glyph: g.glyph,
+          )
+        else
+          g,
+    ];
+    goals.value = next;
+    balance.value = balance.value - amountCents;
+    final tx = Transaction(
+      id: 'tx_${DateTime.now().microsecondsSinceEpoch}',
+      label: 'Goal · $label',
+      amount: -amountCents,
+      when: DateTime.now(),
+      kind: TransactionKind.transfer,
+      category: TransactionCategory.other,
+    );
+    transactions.value = [tx, ...transactions.value].take(20).toList();
   }
 
   void toggleCardFrozen(String lastFour) {
@@ -223,6 +278,29 @@ class WalletData {
         lastFour: '9988',
         spent: 12500,
         limit: 200000,
+      ),
+    ];
+    goals.value = <WalletGoal>[
+      WalletGoal(
+        label: 'Emergency fund',
+        savedCents: 6500000,
+        targetCents: 12000000,
+        dueBy: DateTime(2026, 12, 31),
+        glyph: '⛒',
+      ),
+      WalletGoal(
+        label: 'Tokyo trip',
+        savedCents: 1850000,
+        targetCents: 4500000,
+        dueBy: DateTime(2026, 9, 15),
+        glyph: '✈',
+      ),
+      WalletGoal(
+        label: 'New laptop',
+        savedCents: 1100000,
+        targetCents: 2800000,
+        dueBy: DateTime(2026, 7, 1),
+        glyph: '◫',
       ),
     ];
     weeklySpend.value = 487000;

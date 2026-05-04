@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mosaic_ui/mosaic_ui.dart';
 
 import 'format.dart';
+import 'goals_page.dart';
 import 'panels.dart';
 import 'wallet_data.dart';
 import 'wallet_tiles.dart';
@@ -37,6 +38,10 @@ class WalletHome extends StatelessWidget {
                         MosaicPivotPage(
                           label: 'Cards',
                           child: _CardsPage(data: data),
+                        ),
+                        MosaicPivotPage(
+                          label: 'Goals',
+                          child: GoalsPage(data: data),
                         ),
                       ],
                     ),
@@ -185,13 +190,14 @@ class _ActivityPageState extends State<_ActivityPage> {
             builder: (context, list, _) {
               final filtered = list.where(_matches).toList();
               if (filtered.isEmpty) {
-                return Center(
-                  child: Text(
-                    list.isEmpty ? 'No transactions yet' : 'No matches',
-                    style: tokens.typography.body.copyWith(
-                      color: tokens.color.textSecondary,
-                    ),
-                  ),
+                return MosaicEmptyState(
+                  title: list.isEmpty ? 'No transactions yet' : 'No matches',
+                  body: list.isEmpty
+                      ? 'Once you send, pay, or get paid, the '
+                          'history will show up here.'
+                      : 'Try a different search term or change '
+                          'the filter.',
+                  glyph: list.isEmpty ? '◌' : '⌕',
                 );
               }
               return MosaicList.builder(
@@ -252,13 +258,10 @@ class _CardsPage extends StatelessWidget {
       valueListenable: data.cards,
       builder: (context, list, _) {
         if (list.isEmpty) {
-          return Center(
-            child: Text(
-              'No cards',
-              style: tokens.typography.body.copyWith(
-                color: tokens.color.textSecondary,
-              ),
-            ),
+          return const MosaicEmptyState(
+            title: 'No cards',
+            body: 'Add a card to start spending from this wallet.',
+            glyph: '◫',
           );
         }
         return ListView.separated(

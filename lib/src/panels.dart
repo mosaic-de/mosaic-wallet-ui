@@ -551,6 +551,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            _IdentityCard(),
+            SizedBox(height: tokens.spacing.lg),
             const _SectionHeader(label: 'Appearance'),
             MosaicRadioGroup<MosaicMode>(
               value: app.mode,
@@ -626,6 +628,47 @@ class _SettingsPanelState extends State<SettingsPanel> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _IdentityCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final tokens = MosaicTheme.of(context);
+    return MosaicSurface(
+      padding: EdgeInsets.all(tokens.spacing.md),
+      child: Row(
+        children: [
+          const MosaicAvatar(
+            name: 'John Simiyu',
+            size: MosaicAvatarSize.lg,
+          ),
+          SizedBox(width: tokens.spacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const MosaicText.title('John Simiyu'),
+                SizedBox(height: tokens.spacing.xs),
+                const MosaicText.caption(
+                  'jonny@mosaic.dev · KE',
+                ),
+                SizedBox(height: tokens.spacing.sm),
+                const Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    MosaicBadge(label: 'Pro', tone: MosaicBadgeTone.accent),
+                    MosaicBadge(label: '2FA on', tone: MosaicBadgeTone.success),
+                    MosaicBadge(label: 'Beta', tone: MosaicBadgeTone.warning),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
